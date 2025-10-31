@@ -4,12 +4,13 @@ module controller(
     input wire i_in_valid,
     input wire i_barcode_found,
     input wire i_load_weight_done,
-    input wire i_o_exe_finish,
+    // input wire i_o_exe_finish,
 
     output reg is_load_img_state,
     output reg is_find_barcode_state,
     output reg is_decode_barcode_state,
-    output reg is_load_weight_state
+    output reg is_load_weight_state,
+    output reg is_conv_state
 );
 
 
@@ -67,7 +68,8 @@ module controller(
                 else
                     next_state = S_LOAD_WEIGHT;
             end
-            S_CONV:        next_state = (i_o_exe_finish) ? S_FINISH : S_CONV;
+            // S_CONV:        next_state = (i_o_exe_finish) ? S_FINISH : S_CONV;
+            S_CONV:        next_state = S_CONV;
             S_FINISH:      next_state = S_FINISH;
             default:       next_state = S_RESET;
         endcase
@@ -78,6 +80,7 @@ module controller(
         is_find_barcode_state = 0;
         is_decode_barcode_state = 0;
         is_load_weight_state = 0;
+        is_conv_state = 0;
         case (current_state)
             S_LOAD_IMG: begin
                 is_load_img_state = 1;
@@ -93,6 +96,9 @@ module controller(
 
             S_LOAD_WEIGHT: begin
                 is_load_weight_state = 1;
+            end
+            S_CONV: begin
+                is_conv_state = 1;
             end
             default: is_load_img_state = 0;
         endcase

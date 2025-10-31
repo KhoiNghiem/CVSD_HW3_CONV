@@ -10,7 +10,7 @@ module find_barcode(
     output reg [2:0] shift_cnt,
     output reg [5:0] row_idx,
     output reg barcode_found,
-    output reg found_in_row,
+    // output reg found_in_row,
     output reg is_shift_state,
     output reg is_verify_height_state
 
@@ -29,6 +29,8 @@ module find_barcode(
 	reg [56:0] row_segment;
 	reg [2:0] b_state, b_next;
 	reg [3:0]  same_cnt;
+
+	reg found_in_row;
 
     // ================================================================
 	// FSM sequential
@@ -49,6 +51,7 @@ module find_barcode(
 	always @(*) begin
 		is_shift_state = 0;
         is_verify_height_state = 0;
+		b_next = b_state;
 		case (b_state)
 			B_IDLE:          b_next = B_LOAD_ROW;
 			B_LOAD_ROW:      b_next = B_SHIFT_CHECK;
@@ -73,6 +76,9 @@ module find_barcode(
 					b_next = B_DONE;
 			end
 			B_DONE: b_next = B_DONE;
+			default: begin
+				b_next = B_IDLE;
+			end
 		endcase
 	end
 
